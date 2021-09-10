@@ -1,7 +1,8 @@
 import pygame
 import time
-from Simulation import Simulation, BasicController
+from Simulation import Simulation, BasicMeasurer
 from AutomaticControllers import PIDControler
+from Measurers import PlotingMeasurer
 
 
 if __name__ == '__main__':
@@ -16,6 +17,8 @@ if __name__ == '__main__':
 
     controller = PIDControler(-74, -110, -12, Ts)
     sim.add_controller(controller)
+    measurer = PlotingMeasurer()
+    sim.add_measurer(measurer)
 
     sim.refresh_window()
 
@@ -26,6 +29,7 @@ if __name__ == '__main__':
         sim.handle_events()
         sim.advance_simulation()
         sim.refresh_window()
-        print(f'loop: {time.time() - start_time}s')
+        # print(f'loop: {time.time() - start_time}s')
 
     pygame.quit()
+    measurer.plot_values(['theta'])

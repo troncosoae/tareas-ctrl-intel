@@ -18,10 +18,30 @@ class BasicController:
         return 0
 
 
+class BasicMeasurer:
+    def __init__(self):
+        self.last_values_dict = {}
+
+    def __str__(self):
+        return 'BasicMeasurer...'
+
+    def get_values(self, values_dict):
+        self.last_values_dict = values_dict
+
+    def print_values(self):
+        print_str = ''
+        for key in self.last_values_dict:
+            value = self.last_values_dict[key]
+            print_str += f'{key}: {value:5.4f}\t'
+        print(print_str)
+
+    def per_advance(self):
+        self.print_values()
+
+
 class Simulation:
     def __init__(
-            self, clock, window_w, window_h, Ts,
-            controller=None):
+            self, clock, window_w, window_h, Ts):
         self.clock = clock
         self.window_w = window_w
         self.window_h = window_h
@@ -30,7 +50,8 @@ class Simulation:
 
         self.pixel_m_ratio = 100
 
-        self.controller = controller
+        self.controller = None
+        self.measurer = None
 
         self.cts = {
             'Ts': Ts, 'fs': 1/Ts, 'l': 0.67, 'M': 1, 'm': 0.34, 'g': 9.8}
@@ -54,9 +75,6 @@ class Simulation:
     def map_xy2window(self, x_pend, y_pend, x_car, y_car):
         w = self.window_w
         h = self.window_h
-        print(
-            f'xp:{x_pend:5.4f}, yp:{y_pend:5.4f}, \
-            x:{x_car:5.4f}, y:{y_car:5.4f}')
 
         return (
             (x_pend*self.pixel_m_ratio + w/2) % w,
@@ -120,11 +138,8 @@ class Simulation:
         )
         self.F += c['Ts']*(-100*F + 100*u)
 
-        if self.controller is not None:
-            error = theta - 0
-            self.u = self.controller.next_u(error)
-        else:
-            self.u = 0
+        # work additional devices
+        self.devices_advance()
 
     def tick_clock(self):
         self.clock.tick(self.cts['fs'])
@@ -153,10 +168,39 @@ class Simulation:
         self.x = 0
         self.x_dot = 0
 
+    def get_state(self):
+        return {
+            'u': self.u,
+            'F': self.F,
+            'theta': self.theta,
+            'theta_dot': self.theta_dot,
+            'x': self.x,
+            'x_dot': self.x_dot,
+            'Ts': self.cts['Ts']
+        }
+
+    def devices_advance(self):
+        if self.controller is not None:
+            error = self.theta - 0
+            self.u = self.controller.next_u(error)
+        else:
+            self.u = 0
+
+        if self.measurer is not None:
+            self.measurer.get_values(self.get_state())
+            self.measurer.per_advance()
+
     def add_controller(self, controller):
         if 'next_u' not in dir(controller):
             raise Exception("controller attribute must have 'next_u' method..")
         self.controller = controller
+
+    def add_measurer(self, measurer):
+        if 'get_values' not in dir(measurer) or \
+                'per_advance' not in dir(measurer):
+            raise Exception("controller attribute must have 'get_values'\
+                 method and 'per_advance' method..")
+        self.measurer = measurer
 
 
 if __name__ == '__main__':
@@ -170,7 +214,9 @@ if __name__ == '__main__':
     sim = Simulation(clock, width, height, Ts)
     sim.refresh_window()
     basic_control = BasicController()
+    basic_measurer = BasicMeasurer()
     sim.add_controller(basic_control)
+    sim.add_measurer(basic_measurer)
 
     while not sim.is_closed():
         start_time = time.time()
