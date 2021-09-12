@@ -36,14 +36,14 @@ if __name__ == '__main__':
         # print(f'loop: {time.time() - start_time}s')
 
     pygame.quit()
-    measurer.plot_values(['theta'])
+    measurer.plot_values(['theta', 'theta_dot'])
 
-    historical_values = measurer.get_historical_values()
-    keys = historical_values.keys()
-    for key in keys:
-        plt.plot(
-            np.linspace(0, 1, num=len(historical_values[key])),
-            historical_values[key], label=key)
-    plt.xlabel('t')
-    plt.legend()
-    plt.show()
+    # historical_values = measurer.get_historical_values()
+    # keys = historical_values.keys()
+    # for key in keys:
+    #     plt.plot(
+    #         np.linspace(0, 1, num=len(historical_values[key])),
+    #         historical_values[key], label=key)
+    # plt.xlabel('t')
+    # plt.legend()
+    # plt.show()

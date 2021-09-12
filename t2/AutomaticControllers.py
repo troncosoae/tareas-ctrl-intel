@@ -35,14 +35,20 @@ class ExpertPIController(BasicController):
         self.int_error = ie
         self.last_error = error
 
+        print(f'de:{de:5.3}')
+
         u = 0
         if e > 0.15:
             u = -10
+            if de > 1:
+                u -= 5
         elif e > 0:
             u = 0
 
         if e < -0.15:
             u = 10
+            if de < -1:
+                u += 5
         elif e < 0:
             u = 0
 
