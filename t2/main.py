@@ -3,7 +3,8 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 from Simulation import Simulation
-from AutomaticControllers import PIDController, ExpertController, ExpertPIController
+from AutomaticControllers import PIDController, ExpertController, \
+    ExpertPIController
 from Measurers import PlotingMeasurer
 
 
@@ -40,7 +41,9 @@ if __name__ == '__main__':
     historical_values = measurer.get_historical_values()
     keys = historical_values.keys()
     for key in keys:
-        plt.plot(np.linspace(0, 1, num=len(historical_values[key])), historical_values[key], label=key)
+        plt.plot(
+            np.linspace(0, 1, num=len(historical_values[key])),
+            historical_values[key], label=key)
     plt.xlabel('t')
     plt.legend()
     plt.show()

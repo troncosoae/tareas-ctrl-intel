@@ -73,7 +73,8 @@ class ExpertController(BasicController):
         elif e > 0.05:
             u = -0.111
         elif e > 0:
-            u = e*-74 + de*-110# + ie*-12
+            u = e*-74 + de*-110
+            # u = e*-74 + de*-110 + ie*-12
 
         if e < -0.35:
             u = 15
@@ -84,6 +85,7 @@ class ExpertController(BasicController):
         elif e < -0.05:
             u = 0.111
         elif e < 0:
-            u = e*-74 + de*-110# + ie*-12
+            u = e*-74 + de*-110
+            # u = e*-74 + de*-110 + ie*-12
 
         return u

@@ -39,7 +39,7 @@ class PlotingMeasurer(BasicMeasurer):
         pass
 
     def get_historical_values(self, keys=None):
-        if keys == None:
+        if keys is None:
             keys = self.historical_values.keys()
 
         return {
