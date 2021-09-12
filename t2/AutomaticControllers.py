@@ -1,10 +1,10 @@
-from Simulation import BasicController, BasicMeasurer
+from Simulation import BasicController
 
 
 class PIDController(BasicController):
 
     def __init__(self, kp, ki, kd, Ts):
-        BasicMeasurer.__init__(self)
+        BasicController.__init__(self)
         self.kp = kp
         self.ki = ki
         self.kd = kd
@@ -24,6 +24,7 @@ class PIDController(BasicController):
 
 class ExpertPIController(BasicController):
     def __init__(self, Ts):
+        BasicController.__init__(self)
         self.Ts = Ts
         self.last_error = 0
         self.int_error = 0
