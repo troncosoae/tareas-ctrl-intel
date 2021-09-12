@@ -1,7 +1,9 @@
 import pygame
 import time
+import numpy as np
+import matplotlib.pyplot as plt
 from Simulation import Simulation
-from AutomaticControllers import PIDController, ExpertController
+from AutomaticControllers import PIDController, ExpertController, ExpertPIController
 from Measurers import PlotingMeasurer
 
 
@@ -16,7 +18,7 @@ if __name__ == '__main__':
     sim = Simulation(clock, width, height, Ts)
 
     # controller = PIDController(-74, -110, -12, Ts)
-    controller = ExpertController(Ts)
+    controller = ExpertPIController(Ts)
     sim.add_controller(controller)
     measurer = PlotingMeasurer()
     sim.add_measurer(measurer)
@@ -34,3 +36,11 @@ if __name__ == '__main__':
 
     pygame.quit()
     measurer.plot_values(['theta'])
+
+    historical_values = measurer.get_historical_values()
+    keys = historical_values.keys()
+    for key in keys:
+        plt.plot(np.linspace(0, 1, num=len(historical_values[key])), historical_values[key], label=key)
+    plt.xlabel('t')
+    plt.legend()
+    plt.show()

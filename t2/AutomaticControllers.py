@@ -22,6 +22,33 @@ class PIDController(BasicController):
         return error*self.kp + self.int_error*self.ki + der_error*self.kd
 
 
+class ExpertPIController(BasicController):
+    def __init__(self, Ts):
+        self.Ts = Ts
+        self.last_error = 0
+        self.int_error = 0
+
+    def next_u(self, error):
+        e = error
+        de = (error - self.last_error)/self.Ts
+        ie = self.int_error + error
+        self.int_error = ie
+        self.last_error = error
+
+        u = 0
+        if e > 0.15:
+            u = -10
+        elif e > 0:
+            u = 0
+
+        if e < -0.15:
+            u = 10
+        elif e < 0:
+            u = 0
+
+        return u
+
+
 class ExpertController(BasicController):
 
     def __init__(self, Ts):

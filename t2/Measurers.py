@@ -37,3 +37,10 @@ class PlotingMeasurer(BasicMeasurer):
     def per_advance(self):
         # return super().per_advance()
         pass
+
+    def get_historical_values(self, keys=None):
+        if keys == None:
+            keys = self.historical_values.keys()
+
+        return {
+            k: v for k, v in self.historical_values.items() if k in keys}
