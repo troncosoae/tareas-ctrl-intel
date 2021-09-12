@@ -41,7 +41,7 @@ class BasicMeasurer:
 
 class Simulation:
     def __init__(
-            self, clock, window_w, window_h, Ts):
+            self, clock, window_w, window_h, Ts, *args, **kwargs):
         self.clock = clock
         self.window_w = window_w
         self.window_h = window_h
@@ -58,10 +58,10 @@ class Simulation:
 
         self.u = 0
         self.F = 0
-        self.theta = 0.3
-        self.theta_dot = 0
-        self.x = 0
-        self.x_dot = 0
+        self.theta = kwargs.get('theta_0', 0.3)
+        self.theta_dot = kwargs.get('theta_dot_0', 0)
+        self.x = kwargs.get('x_0', 0)
+        self.x_dot = kwargs.get('x_dot_0', 0)
 
     def xy_coordinates(self):
         y_pend2car = np.cos(self.theta)*self.cts['l']

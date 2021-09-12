@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     width, height = (1000, 600)
     Ts = 0.001
-    sim = Simulation(clock, width, height, Ts)
+    sim = Simulation(clock, width, height, Ts, theta_0=-0.3)
 
     # controller = PIDController(-74, -110, -12, Ts)
     controller = ExpertPIController(Ts)
