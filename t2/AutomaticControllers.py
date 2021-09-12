@@ -46,6 +46,10 @@ class ExpertPIController(BasicController):
                 u += 2.5
         elif e > 0:
             u = 0
+            if de > 1:
+                u -= 2.5
+            if de < -1:
+                u += 2.5
 
         if e < -0.15:
             u = 12.5
@@ -55,6 +59,10 @@ class ExpertPIController(BasicController):
                 u += 2.5
         elif e < 0:
             u = 0
+            if de > 1:
+                u -= 2.5
+            if de < -1:
+                u += 2.5
 
         return u
 
