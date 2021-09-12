@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from Simulation import Simulation
 from AutomaticControllers import PIDController, ExpertController, \
     ExpertPIController
+from FuzzyTools import FuzzyController
 from Measurers import PlotingMeasurer
 
 
@@ -19,7 +20,8 @@ if __name__ == '__main__':
     sim = Simulation(clock, width, height, Ts, theta_0=-0.3)
 
     # controller = PIDController(-74, -110, -12, Ts)
-    controller = ExpertPIController(Ts)
+    # controller = ExpertPIController(Ts)
+    controller = FuzzyController(['e', 'de'])
     sim.add_controller(controller)
     measurer = PlotingMeasurer()
     sim.add_measurer(measurer)
