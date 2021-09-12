@@ -45,14 +45,10 @@ class FuzzyPIController(BasicController):
             for de_set_key in de_membership_values:
                 output_set = self.output_sets[
                     f'e: {e_set_key}; de: {de_set_key}']
-                # print(output_set.membership_function(12.5), e_membership_values[e_set_key], de_membership_values[de_set_key])
-                # print(np.min([
-                #     output_set.membership_function(12.5),
-                #     e_membership_values[e_set_key],
-                #     de_membership_values[de_set_key]
-                # ]))
 
-                def get_output_function(e_set_key, de_set_key, membership_function):
+                def get_output_function(
+                        e_set_key, de_set_key,
+                        membership_function):
                     def output_function(x):
                         return np.min([
                             membership_function(x),
@@ -60,9 +56,8 @@ class FuzzyPIController(BasicController):
                             de_membership_values[de_set_key]
                         ])
                     return output_function
-                output_function = get_output_function(e_set_key, de_set_key, output_set.membership_function)
-
-                # print('l1', output_function(12.5))
+                output_function = get_output_function(
+                    e_set_key, de_set_key, output_set.membership_function)
 
                 output_functions.append(output_function)
 
@@ -72,13 +67,6 @@ class FuzzyPIController(BasicController):
     def defuzzification(self, output_functions):
         def output_function(x):
             return np.max([f(x) for f in output_functions])
-        # test = 12.5
-        # print([f(test) for f in output_functions])
-        # print(f'output_function({test})', output_function(test))
-        # x_list = np.linspace(-20, 20, num=2000)
-        # y_list = [output_function(x) for x in x_list]
-        # plt.plot(x_list, y_list)
-        # plt.show()
         int_fx = quad(lambda x: output_function(x)*x, -20, 20)[0]
         int_f = quad(lambda x: output_function(x), -20, 20)[0]
         if int_f == 0:
