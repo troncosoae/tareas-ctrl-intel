@@ -33,3 +33,7 @@ class PlotingMeasurer(BasicMeasurer):
         plt.xlabel('t')
         plt.legend()
         plt.show()
+
+    def per_advance(self):
+        # return super().per_advance()
+        pass

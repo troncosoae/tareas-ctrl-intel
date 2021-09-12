@@ -1,7 +1,7 @@
 import pygame
 import time
-from Simulation import Simulation, BasicMeasurer
-from AutomaticControllers import PIDControler
+from Simulation import Simulation
+from AutomaticControllers import PIDController, ExpertController
 from Measurers import PlotingMeasurer
 
 
@@ -15,7 +15,8 @@ if __name__ == '__main__':
     Ts = 0.001
     sim = Simulation(clock, width, height, Ts)
 
-    controller = PIDControler(-74, -110, -12, Ts)
+    # controller = PIDController(-74, -110, -12, Ts)
+    controller = ExpertController()
     sim.add_controller(controller)
     measurer = PlotingMeasurer()
     sim.add_measurer(measurer)
