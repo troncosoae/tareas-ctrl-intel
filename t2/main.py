@@ -16,7 +16,7 @@ if __name__ == '__main__':
     sim = Simulation(clock, width, height, Ts)
 
     # controller = PIDController(-74, -110, -12, Ts)
-    controller = ExpertController()
+    controller = ExpertController(Ts)
     sim.add_controller(controller)
     measurer = PlotingMeasurer()
     sim.add_measurer(measurer)

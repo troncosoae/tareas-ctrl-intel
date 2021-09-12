@@ -24,14 +24,18 @@ class PIDController(BasicController):
 
 class ExpertController(BasicController):
 
-    def __init__(self):
+    def __init__(self, Ts):
         BasicController.__init__(self)
         self.last_error = 0
+        self.int_error = 0
+        self.Ts = Ts
 
     def next_u(self, error):
         e = error
-        de = error - self.last_error
+        de = (error - self.last_error)/self.Ts
         self.last_error = error
+        ie = self.int_error + error*self.Ts
+        self.int_error = ie
         u = 0
         if e > 0.35:
             u = -15
@@ -41,6 +45,8 @@ class ExpertController(BasicController):
             u = -1.5
         elif e > 0.05:
             u = -0.111
+        elif e > 0:
+            u = e*-74 + de*-110# + ie*-12
 
         if e < -0.35:
             u = 15
@@ -50,5 +56,7 @@ class ExpertController(BasicController):
             u = 1.5
         elif e < -0.05:
             u = 0.111
+        elif e < 0:
+            u = e*-74 + de*-110# + ie*-12
 
         return u
