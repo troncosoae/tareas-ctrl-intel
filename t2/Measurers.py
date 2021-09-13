@@ -42,5 +42,7 @@ class PlotingMeasurer(BasicMeasurer):
         if keys is None:
             keys = self.historical_values.keys()
 
-        return {
+        historical_values = {
             k: v for k, v in self.historical_values.items() if k in keys}
+        historical_values['t'] = self.t
+        return historical_values

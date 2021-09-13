@@ -57,14 +57,22 @@ class FuzzyExpertController(BasicController):
 
             output_functions.append(output_function)
 
-        print([f(12.5) for f in output_functions])
+        print([f(1.5) for f in output_functions])
         return output_functions
 
     def defuzzification(self, output_functions):
         def output_function(x):
             return np.max([f(x) for f in output_functions])
-        int_fx = quad(lambda x: output_function(x)*x, -20, 20)[0]
-        int_f = quad(lambda x: output_function(x), -20, 20)[0]
+        print([f(1.5) for f in output_functions])
+        print('output_function(1.5)', output_function(1.5))
+        int_fx = quad(lambda x: output_function(x)*x, -16, 16, points=[-1.5, 0, -1.5])[0]
+        int_f = quad(lambda x: output_function(x), -16, 16, points=[-1.5, 0, -1.5])[0]
+        print('int_fx', int_fx)
+        print('int_f', int_f)
+        # x_list = np.linspace(-20, 20, num=100)
+        # y_list = [output_function(x) for x in x_list]
+        # plt.plot(x_list, y_list)
+        # plt.show()
         if int_f == 0:
             int_f = 1e-10
         out = int_fx/int_f
@@ -78,6 +86,11 @@ class FuzzyExpertController(BasicController):
         self.last_error = error
 
         membership_values = self.fuzzify_inputs({'e': e})
+        if membership_values['e']['zer'] != 0:
+            u = e*-74 + de*-110
+            print(f'e: {e:5.5}, de: {de:5.5} -> u: {u:5.5}')
+            return u
+
         output_functions = self.inference_model(membership_values)
         u = self.defuzzification(output_functions)
 

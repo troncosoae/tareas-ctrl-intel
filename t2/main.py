@@ -40,7 +40,7 @@ if __name__ == '__main__':
         'e: mpos': FuzzySet(trapezoid_function_generator(-8.8, -7.8, -7.8, -6.8)),
         'e: spos': FuzzySet(trapezoid_function_generator(-2.5, -1.5, -1.5, -0.5)),
         'e: sspos': FuzzySet(trapezoid_function_generator(-0.000, -0.111, -0.111, -0.222)),
-        'e: zer': FuzzySet(trapezoid_function_generator(-1.5, 0, 0, 1.5)),
+        'e: zer': FuzzySet(trapezoid_function_generator(-0.5, -0.499, 0.499, 0.5)),
         'e: ssneg': FuzzySet(trapezoid_function_generator(0.222, 0.111, 0.111, 0.000)),
         'e: sneg': FuzzySet(trapezoid_function_generator(0.5, 1.5, 1.5, 2.5)),
         'e: mneg': FuzzySet(trapezoid_function_generator(6.8, 7.8, 7.8, 8.8)),
@@ -65,7 +65,20 @@ if __name__ == '__main__':
     pygame.quit()
     measurer.plot_values(['theta', 'theta_dot'])
 
-    # historical_values = measurer.get_historical_values()
+    historical_values = measurer.get_historical_values(['theta'])
+    theta_history = historical_values['theta']
+    t_history = historical_values['t']
+    int_theta = 0
+    index = 0
+    for t in t_history:
+        if t > 3:
+            break
+        int_theta += np.abs(theta_history[index])
+        index += 1
+    int_theta *= Ts
+    print('int_theta: ', int_theta)
+    plt.plot(t_history, theta_history)
+    plt.show()
     # keys = historical_values.keys()
     # for key in keys:
     #     plt.plot(
