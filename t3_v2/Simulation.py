@@ -119,6 +119,7 @@ class SimulationBox:
             if i_key not in input_values:
                 raise Exception(
                     "'input_values' must include box's input keys")
+        return {}
 
 
 class SimulationSignal:

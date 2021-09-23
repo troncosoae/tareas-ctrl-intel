@@ -1,0 +1,45 @@
+import matplotlib.pyplot as plt
+
+from Simulation import SimulationBox
+
+
+class BasicMeasurer(SimulationBox):
+    def __init__(self, key, inputs_keys):
+        SimulationBox.__init__(self, key, inputs_keys, [])
+
+    def advance(self, input_values):
+        super().advance(input_values)
+        # print(input_values)
+        return {}
+
+
+class PlottingMeasurer(BasicMeasurer):
+    def __init__(self, key, inputs_keys, Ts):
+        BasicMeasurer.__init__(self, key, inputs_keys)
+        self.Ts = Ts
+        self.t = []
+        self.historical_values = {}
+
+    def advance(self, input_values):
+        super().advance(input_values)
+        if len(self.t) == 0:
+            self.t.append(0)
+        else:
+            self.t.append(self.t[-1] + self.Ts)
+        for key in self.inputs_keys:
+            value = input_values[key]
+            if key not in self.historical_values:
+                self.historical_values[key] = [value]
+            else:
+                self.historical_values[key].append(value)
+        return {}
+
+    def plot_values(self, keys=None):
+        if keys is None:
+            keys = self.historical_values.keys()
+
+        for key in keys:
+            plt.plot(self.t, self.historical_values[key], label=key)
+        plt.xlabel('t')
+        plt.legend()
+        plt.show()
