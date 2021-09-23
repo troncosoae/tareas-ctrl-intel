@@ -1,5 +1,6 @@
 from Simulation import Simulation, SimulationBox
-from Boxes import PygameBox, PendulumSystem
+from SystemBoxes import PendulumSystem
+from PygameBoxes import PendulumWindow
 
 
 if __name__ == "__main__":
@@ -21,7 +22,7 @@ if __name__ == "__main__":
     pendulum_system = PendulumSystem('p_sys', Ts, theta_0=0.3)
     sim.add_box(pendulum_system, {'u': 0})
 
-    pygame_tracker = PygameBox('pygame', ['x', 'theta'], 1/Ts)
+    pygame_tracker = PendulumWindow('pygame', ['x', 'theta'], 1/Ts)
     sim.add_box(pygame_tracker)
 
     print(sim.advance_order)
