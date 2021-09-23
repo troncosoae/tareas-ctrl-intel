@@ -6,7 +6,7 @@ from Simulation import SimulationBox
 class PendulumSystem(SimulationBox):
     def __init__(self, key, Ts, **kwargs):
         SimulationBox.__init__(
-            self, key, ['u'], ['theta', 'theta_dot', 'x', 'x_dot'])
+            self, key, ['u'], ['theta', 'theta_dot', 'x', 'x_dot', 'F'])
         self.cts = {
             'Ts': Ts, 'fs': 1/Ts, 'l': 0.67, 'M': 1, 'm': 0.34, 'g': 9.8}
 
@@ -52,5 +52,6 @@ class PendulumSystem(SimulationBox):
             'theta': self.state['theta'],
             'theta_dot': self.state['theta_dot'],
             'x': self.state['x'],
-            'x_dot': self.state['x_dot']
+            'x_dot': self.state['x_dot'],
+            'F': self.state['F']
         }

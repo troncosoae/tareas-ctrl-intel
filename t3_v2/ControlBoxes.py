@@ -28,3 +28,22 @@ class PIDController(SimulationBox):
 
         u = error*self.kp + self.int_error*self.ki + der_error*self.kd
         return {self.man_v_name: u}
+
+
+class LQRController(SimulationBox):
+
+    def __init__(self, key, inputs_keys, man_v_name, K):
+        SimulationBox.__init__(
+            self, key, inputs_keys, [man_v_name])
+        self.man_v_name = man_v_name
+
+        self.K = K
+
+    def advance(self, input_values):
+        super().advance(input_values)
+
+        u = 0
+        for k in self.inputs_keys:
+            u += self.K[k]*input_values[k]
+
+        return {self.man_v_name: u}
