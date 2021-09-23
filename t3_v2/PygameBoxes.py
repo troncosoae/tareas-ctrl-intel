@@ -5,7 +5,7 @@ from Simulation import SimulationBox
 
 
 class PendulumWindow(SimulationBox):
-    def __init__(self, key, inputs_keys, fs, **kwargs):
+    def __init__(self, key, inputs_keys, fs, close_function, **kwargs):
         SimulationBox.__init__(self, key, inputs_keys, [])
 
         pygame.init()
@@ -15,7 +15,7 @@ class PendulumWindow(SimulationBox):
         self.width = kwargs.get('width', 1000)
         self.height = kwargs.get('height', 600)
         self.window = pygame.display.set_mode((self.width, self.height))
-        self.close = False
+        self.close_function = close_function
 
     def xy_coordinates(self, x, theta):
         # print(f't:{theta:.2f}\tx:{x:.2f}')
@@ -64,11 +64,29 @@ class PendulumWindow(SimulationBox):
         pygame.display.update()
 
     def handle_events(self):
-        pass
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                print('Q')
+                self.close()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    print('esc')
+                    self.close()
+                if event.key == pygame.K_r:
+                    print('R')
+                if event.key == pygame.K_q:
+                    print('Q')
 
     def advance(self, input_values):
         super().advance(input_values)
         self.clock.tick(self.fs)
+        self.handle_events()
         self.refresh_window(input_values['x'], input_values['theta'])
         # print(input_values)
         return {}
+
+    def close(self):
+        self.close_function()
+
+    def quit_pygame(self):
+        pygame.quit()

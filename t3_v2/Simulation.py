@@ -1,8 +1,15 @@
+def get_close_sim_for_box(sim):
+    def func():
+        sim.close()
+    return func
+
+
 class Simulation:
     def __init__(self):
         self.boxes = {}
         self.signals = {}
         self.advance_order = []
+        self.running = False
 
     def __str__(self):
         return 'Simulation'
@@ -67,7 +74,6 @@ class Simulation:
                 print(f"new signal {signal_key} created...")
 
     def advance(self):
-
         signals_dict = {
             s_key: self.signals[s_key].value for s_key in self.signals}
 
@@ -82,11 +88,15 @@ class Simulation:
 
     def run(self):
         iteration = 0
-        while iteration < 100000:
+        self.running = True
+        while self.running:
             # print(f'it: {iteration}')
             self.advance()
 
             iteration += 1
+
+    def close(self):
+        self.running = False
 
 
 class SimulationBox:
