@@ -18,7 +18,7 @@ class PendulumWindow(SimulationBox):
         self.close = False
 
     def xy_coordinates(self, x, theta):
-        print(f't:{theta:.2f}\tx:{x:.2f}')
+        # print(f't:{theta:.2f}\tx:{x:.2f}')
         y_pend2car = np.cos(theta)*0.67
         x_pend2car = np.sin(theta)*0.67
         x_car = x
@@ -70,5 +70,5 @@ class PendulumWindow(SimulationBox):
         super().advance(input_values)
         self.clock.tick(self.fs)
         self.refresh_window(input_values['x'], input_values['theta'])
-        print(input_values)
+        # print(input_values)
         return {}

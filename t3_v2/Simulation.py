@@ -73,7 +73,7 @@ class Simulation:
 
         # print('signals_dict', signals_dict)
         for box_key in self.advance_order:
-            print(box_key, 'signals_dict', signals_dict)
+            # print(box_key, 'signals_dict', signals_dict)
             outputs = self.boxes[box_key].advance(signals_dict)
             # print(box_key, 'outputs', outputs)
             for signal_key in outputs:

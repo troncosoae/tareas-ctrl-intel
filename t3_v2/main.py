@@ -22,7 +22,8 @@ if __name__ == "__main__":
 
     pendulum_system = PendulumSystem('p_sys', Ts, theta_0=0.3)
     pygame_tracker = PendulumWindow('pygame', ['x', 'theta'], 1/Ts)
-    pid_controller = PIDController('pid', -74, -110, -12, Ts)
+    pid_controller = PIDController(
+        'pid', 'ref', 'theta', 'u', -74, -110, -12, Ts)
 
     sim.add_box(pendulum_system, {'u': 0})
     print('u', sim.signals['u'].value)
