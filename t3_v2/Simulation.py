@@ -59,8 +59,12 @@ class Simulation:
                 if self.signals[signal_key].origin_box_key is not None:
                     raise Exception(
                         f"signal '{signal_key}' already has origin...")
+                print(f"signal {signal_key} already in...")
                 self.signals[signal_key].origin_box_key = box.key
-            self.signals[signal_key] = SimulationSignal(signal_key, box.key)
+            else:
+                self.signals[signal_key] = SimulationSignal(
+                    signal_key, box.key)
+                print(f"new signal {signal_key} created...")
 
     def advance(self):
 
@@ -69,6 +73,7 @@ class Simulation:
 
         # print('signals_dict', signals_dict)
         for box_key in self.advance_order:
+            print(box_key, 'signals_dict', signals_dict)
             outputs = self.boxes[box_key].advance(signals_dict)
             # print(box_key, 'outputs', outputs)
             for signal_key in outputs:

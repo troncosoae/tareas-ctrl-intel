@@ -1,6 +1,7 @@
 from Simulation import Simulation, SimulationBox
 from SystemBoxes import PendulumSystem
 from PygameBoxes import PendulumWindow
+from ControlBoxes import PIDController
 
 
 if __name__ == "__main__":
@@ -20,9 +21,13 @@ if __name__ == "__main__":
     # print(box2)
 
     pendulum_system = PendulumSystem('p_sys', Ts, theta_0=0.3)
-    sim.add_box(pendulum_system, {'u': 0})
-
     pygame_tracker = PendulumWindow('pygame', ['x', 'theta'], 1/Ts)
+    pid_controller = PIDController('pid', -74, -110, -12, Ts)
+
+    sim.add_box(pendulum_system, {'u': 0})
+    print('u', sim.signals['u'].value)
+    sim.add_box(pid_controller, {'ref': 0})
+    print('u', sim.signals['u'].value)
     sim.add_box(pygame_tracker)
 
     print(sim.advance_order)
