@@ -63,13 +63,22 @@ class Simulation:
             self.signals[signal_key] = SimulationSignal(signal_key, box.key)
 
     def advance(self):
+
+        signals_dict = {
+            s_key: self.signals[s_key].value for s_key in self.signals}
+
+        # print('signals_dict', signals_dict)
         for box_key in self.advance_order:
-            print(box_key)
+            outputs = self.boxes[box_key].advance(signals_dict)
+            # print(box_key, 'outputs', outputs)
+            for signal_key in outputs:
+                self.signals[signal_key].update_value(outputs[signal_key])
+                signals_dict[signal_key] = outputs[signal_key]
 
     def run(self):
         iteration = 0
-        while iteration < 10:
-            print(f'it: {iteration}')
+        while iteration < 100000:
+            # print(f'it: {iteration}')
             self.advance()
 
             iteration += 1
@@ -88,10 +97,13 @@ class SimulationBox:
             ';\t'.join(self.outputs_keys)
         )
 
-    def advance(self):
+    def advance(self, input_values):
         # uses values of signals
         # returns values of output signals
-        pass
+        for i_key in self.inputs_keys:
+            if i_key not in input_values:
+                raise Exception(
+                    "'input_values' must include box's input keys")
 
 
 class SimulationSignal:
@@ -99,6 +111,10 @@ class SimulationSignal:
         self.key = key
         self.origin_box_key = origin_box_key
         self.initial_values = initial_values
+        self.value = initial_values
+
+    def update_value(self, value):
+        self.value = value
 
     def __str__(self):
         return 'S([{}] -> {})'.format(
