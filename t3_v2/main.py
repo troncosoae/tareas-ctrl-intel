@@ -18,7 +18,7 @@ if __name__ == "__main__":
     # pid_controller = PIDController(
     #     'pid', 'ref', 'theta', 'u', -74, -110, -12, Ts)
     lqr_controller = LQRController(
-        'lqr', ['theta', 'theta_dot', 'F'], 'u', 
+        'lqr', ['theta', 'theta_dot', 'F'], 'u',
         {'theta': -29.5, 'theta_dot': -7.20, 'F': 0.107})
     measurer = PlottingMeasurer('meas', ['u', 'theta', 'theta_pred'], Ts)
     pendulum_model = LinearPendulumModel('model', Ts, theta_0=-0.3)
