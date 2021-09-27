@@ -68,14 +68,14 @@ class LQRSubmodelController(SimulationBox):
         K = self.K1
         if (np.abs(input_values['theta']) > np.pi/8 and
                 np.abs(input_values['theta_dot']) < 1.5):
-            print('K2')
+            # print('K2')
             K = self.K2
         elif (np.abs(input_values['theta']) <= np.pi/8 and
                 np.abs(input_values['theta_dot']) >= 1.5):
             K = self.K3
-            print('K3')
-        else:
-            print('K1')
+            # print('K3')
+        # else:
+        #     print('K1')
 
         u = 0
         for k in self.inputs_keys:

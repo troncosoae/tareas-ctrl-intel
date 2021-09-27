@@ -226,8 +226,8 @@ class PendulumSubModelsModel(SimulationBox):
         super().advance(input_values)
 
         if np.abs(input_values['theta']) > np.pi/8:
-            print('linear model 2')
+            # print('linear model 2')
             return self.linear_model2(input_values)
         else:
-            print('linear model 1')
+            # print('linear model 1')
             return self.linear_model1(input_values)
