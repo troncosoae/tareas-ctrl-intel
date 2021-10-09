@@ -61,7 +61,7 @@ class PHLevelSystem(SimulationBox):
 
     def __init__(self, key, Ts, **kwargs):
         SimulationBox.__init__(
-            self, key, ['u'], ['xi', 'zeta'])
+            self, key, ['f1', 'f2'], ['xi', 'zeta'])
         self.cts = {
             'Ts': Ts, 'fs': 1/Ts, 'V': 1, 'c1': 1, 'c2': 1}
 
@@ -72,10 +72,9 @@ class PHLevelSystem(SimulationBox):
 
     def advance(self, input_values):
         super().advance(input_values)
-        u = input_values['u']
+        f1 = input_values['f1']
+        f2 = input_values['f2']
         c = self.cts
-        f1 = 3
-        f2 = 3
         xi = self.state['xi']
         zeta = self.state['zeta']
 

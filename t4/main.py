@@ -1,13 +1,8 @@
 import numpy as np
 
 from Simulation import Simulation, get_close_sim_for_box
-from SystemBoxes import PendulumSystem
-from PygameBoxes import PendulumWindow
-from ControlBoxes import PIDController, LQRController, LQRSubmodelController
-from MeasuringBoxes import PlottingMeasurer
-from ModelBoxes import PendulumModel, LinearPendulumModel, \
-    PendulumSubModelsModel
-from FuzzyControlBoxes import LQRSubmodelFuzzyController
+from SystemBoxes import PendulumSystem, PHLevelSystem
+from PygameBoxes import PendulumWindow, PHLevelWindow
 
 
 if __name__ == "__main__":
@@ -17,11 +12,11 @@ if __name__ == "__main__":
 
     sim = Simulation()
 
-    pendulum_system = PendulumSystem('p_sys', Ts, theta_0=theta_0)
-    pygame_tracker = PendulumWindow(
-        'pygame', ['x', 'theta'], 1/Ts, get_close_sim_for_box(sim))
+    system = PHLevelSystem('p_sys', Ts, xi_0=3, zeta_0=2)
+    pygame_tracker = PHLevelWindow(
+        'pygame', ['xi', 'zeta'], 1/Ts, get_close_sim_for_box(sim))
 
-    sim.add_box(pendulum_system, {'u': 0})
+    sim.add_box(system, {'f1': 3, 'f2': 3})
     sim.add_box(pygame_tracker)
 
     sim.run()
