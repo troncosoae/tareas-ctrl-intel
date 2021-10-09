@@ -13,7 +13,7 @@ from FuzzyControlBoxes import LQRSubmodelFuzzyController
 if __name__ == "__main__":
 
     Ts = 0.001
-    theta_0 = -0.8
+    theta_0 = np.pi
 
     sim = Simulation()
 
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     pygame_tracker.quit_pygame()
 
     measurer.plot_values([
-        'theta', 'theta_pred', 'x', 'x_pred', 'F', 'F_pred'])
+        'theta'])
     measurer.plot_values([
         'theta', 'theta_pred', 'theta_dot', 'theta_dot_pred'])
 
