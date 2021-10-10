@@ -61,9 +61,10 @@ class PHLevelSystem(SimulationBox):
 
     def __init__(self, key, Ts, **kwargs):
         SimulationBox.__init__(
-            self, key, ['f1', 'f2'], ['xi', 'zeta'])
+            self, key, ['f1', 'f2'], ['xi', 'zeta', 'H', 'pH'])
         self.cts = {
-            'Ts': Ts, 'fs': 1/Ts, 'V': 1, 'c1': 1, 'c2': 1}
+            'Ts': Ts, 'fs': 1/Ts, 'V': 1, 'c1': 0.32, 'c2': 0.05005,
+            'ka': 1.8e-5, 'kw': 1e-14}
 
         self.state = {
             'xi': kwargs.get('xi_0', 0),
@@ -85,7 +86,21 @@ class PHLevelSystem(SimulationBox):
             f2*c['c2'] - (f1 + f2)*zeta
         )
 
+        coef = [
+            1,
+            c['ka'] + self.state['zeta'],
+            c['ka']*(self.state['zeta'] - self.state['xi'] - c['kw']),
+            -c['kw']*c['ka']
+        ]
+        roots = np.roots(coef)
+        print(roots)
+        H = np.max(roots)
+        pH = -np.log10(H)
+        print(roots, H, pH)
+
         return {
             'xi': self.state['xi'],
-            'zeta': self.state['zeta']
+            'zeta': self.state['zeta'],
+            'H': H,
+            'pH': pH
         }

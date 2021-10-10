@@ -105,48 +105,20 @@ class PHLevelWindow(SimulationBox):
         self.window = pygame.display.set_mode((self.width, self.height))
         self.close_function = close_function
 
-    def xy_coordinates(self, x, theta):
-        # print(f't:{theta:.2f}\tx:{x:.2f}')
-        y_pend2car = np.cos(theta)*0.67
-        x_pend2car = np.sin(theta)*0.67
-        x_car = x
-        y_car = 0
-        x_pend = x_pend2car + x_car
-        y_pend = y_pend2car + y_car
-        return x_pend, y_pend, x_car, y_car
+    def refresh_window(self, xi, zeta, H, pH):
 
-    def map_xy2window(self, x_pend, y_pend, x_car, y_car):
-        w = self.width
-        h = self.height
-        return (
-            (x_pend*self.pixel_m_ratio + w/2) % w,
-            h/2 - y_pend*self.pixel_m_ratio,
-            (x_car*self.pixel_m_ratio + w/2) % w,
-            h/2 - y_car*self.pixel_m_ratio
-        )
-
-    def refresh_window(self, xi, zeta):
-        x_pend, y_pend, x_car, y_car = self.xy_coordinates(xi, zeta)
-        x_pend, y_pend, x_car, y_car = self.map_xy2window(
-            x_pend, y_pend, x_car, y_car)
+        pH_win = self.height - pH*self.height/14
 
         self.window.fill((0, 0, 0))
 
         pygame.draw.lines(
             self.window, (10, 255, 255), False,
-            [(x_pend, y_pend), (x_car, y_car)], 2
+            [(self.width/4, pH_win), (3*self.width/4, pH_win)], 2
         )
+
         pygame.draw.lines(
-            self.window, (255, 255, 255), False,
-            [(self.width/2, 0), (self.width/2, self.height)], 1
-        )
-        pygame.draw.circle(
-            self.window, (255, 10, 255),
-            (x_pend, y_pend), 7
-        )
-        pygame.draw.circle(
-            self.window, (255, 255, 10),
-            (x_car, y_car), 10
+            self.window, (10, 255, 255), False,
+            [(0, self.height/2), (self.width, self.height/2)], 2
         )
 
         pygame.display.update()
@@ -169,7 +141,11 @@ class PHLevelWindow(SimulationBox):
         super().advance(input_values)
         self.clock.tick(self.fs)
         self.handle_events()
-        self.refresh_window(input_values['xi'], input_values['zeta'])
+        self.refresh_window(
+            input_values['xi'],
+            input_values['zeta'],
+            input_values['H'],
+            input_values['pH'])
         # print(input_values)
         return {}
 
