@@ -5,6 +5,14 @@ from fuzzy_tools import ramp_function_generator, \
     trapezoid_function_generator, inv_trapezoid_function_generator
 
 
+class GeneticFuzzyController(SimulationBox):
+    def __init__(self, key, inputs_keys, outputs_keys, variables):
+        super().__init__(key, inputs_keys, outputs_keys)
+
+    def advance(self, input_values):
+        super().advance(input_values)
+
+
 class LQRSubmodelFuzzyController(SimulationBox):
 
     def __init__(self, key, inputs_keys, man_v_name, K1, K2, K3):

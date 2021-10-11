@@ -98,7 +98,7 @@ class PHLevelWindow(SimulationBox):
 
         pygame.init()
         self.clock = pygame.time.Clock()
-        self.fs = fs
+        self.fs = fs*kwargs.get('speed_up', 1)
         self.pixel_m_ratio = 100
         self.width = kwargs.get('width', 1000)
         self.height = kwargs.get('height', 600)

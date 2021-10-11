@@ -39,6 +39,19 @@ def inv_trapezoid_function_generator(a, b, c, d):
     return inv_trapezoid_function
 
 
+def triangle_function_generator(a, b, c):
+    def triangle_function(x):
+        return np.max([
+            np.min([
+                (1 - 0)/(b - a)*(x - a) + 0,
+                1,
+                (0 - 1)/(c - b)*(x - b) + 1
+            ]),
+            0
+        ])
+    return triangle_function
+
+
 if __name__ == '__main__':
     func = inv_trapezoid_function_generator(1, 2, 3, 4)
     print(func(0.5))
