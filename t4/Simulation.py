@@ -5,11 +5,13 @@ def get_close_sim_for_box(sim):
 
 
 class Simulation:
-    def __init__(self):
+    def __init__(self, max_iters=None):
         self.boxes = {}
         self.signals = {}
         self.advance_order = []
         self.running = False
+        self.iters = 0
+        self.max_iters = max_iters
 
     def __str__(self):
         return 'Simulation'
@@ -74,6 +76,12 @@ class Simulation:
                 print(f"new signal {signal_key} created...")
 
     def advance(self):
+
+        self.iters += 1
+        # print('############', self.iters)
+        if self.max_iters is not None and self.iters > self.max_iters:
+            self.running = False
+
         signals_dict = {
             s_key: self.signals[s_key].value for s_key in self.signals}
 

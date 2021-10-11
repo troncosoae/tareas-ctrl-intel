@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.core.fromnumeric import var
 
 from Simulation import SimulationBox
 from fuzzy_tools import ramp_function_generator, \
@@ -7,49 +8,103 @@ from fuzzy_tools import ramp_function_generator, \
 
 
 class GeneticFuzzyController(SimulationBox):
-    def __init__(self, key, inputs_keys, outputs_keys, variables):
+    def __init__(self, key, inputs_keys, outputs_keys, variables, delta=0.3):
         super().__init__(key, inputs_keys, outputs_keys)
 
+        self.int_e = 0
+        self.delta = delta
+        self.iters2delta = None
+        self.iters = 0
+
+        self.variables = variables
+
+        e_vars = variables[0:7]
+        de_vars = variables[7:14]
+        f1_vars = variables[14:23]
+        f2_vars = variables[23:32]
+
         self.e_sets_dict = {
-            'se': ramp_function_generator(1, 3),
-            'ze': triangle_function_generator(2, 3, 4),
-            'be': ramp_function_generator(3, 5)
+            'se': ramp_function_generator(e_vars[0], e_vars[2]),
+            'ze': triangle_function_generator(
+                e_vars[1], e_vars[3], e_vars[5]),
+            'be': ramp_function_generator(e_vars[6], e_vars[4])
         }
         self.de_sets_dict = {
-            'sde': ramp_function_generator(1, 3),
-            'zde': triangle_function_generator(2, 3, 4),
-            'bde': ramp_function_generator(3, 5)
+            'sde': ramp_function_generator(de_vars[0], de_vars[2]),
+            'zde': triangle_function_generator(
+                de_vars[1], de_vars[3], de_vars[5]),
+            'bde': ramp_function_generator(de_vars[6], de_vars[4])
         }
 
         self.f1_dict = {
-            'sesde': 1,
-            'sezde': 1,
-            'sebde': 1,
-            'zesde': 1,
-            'zezde': 1,
-            'zebde': 1,
-            'besde': 1,
-            'bezde': 1,
-            'bebde': 1
+            'sesde': f1_vars[0],
+            'sezde': f1_vars[1],
+            'sebde': f1_vars[2],
+            'zesde': f1_vars[3],
+            'zezde': f1_vars[4],
+            'zebde': f1_vars[5],
+            'besde': f1_vars[6],
+            'bezde': f1_vars[7],
+            'bebde': f1_vars[8]
         }
         self.f2_dict = {
-            'sesde': 1,
-            'sezde': 1,
-            'sebde': 1,
-            'zesde': 1,
-            'zezde': 1,
-            'zebde': 1,
-            'besde': 1,
-            'bezde': 1,
-            'bebde': 1
+            'sesde': f2_vars[0],
+            'sezde': f2_vars[1],
+            'sebde': f2_vars[2],
+            'zesde': f2_vars[3],
+            'zezde': f2_vars[4],
+            'zebde': f2_vars[5],
+            'besde': f2_vars[6],
+            'bezde': f2_vars[7],
+            'bebde': f2_vars[8]
         }
 
     def advance(self, input_values):
         super().advance(input_values)
+
+        e = input_values['e']
+        de = input_values['de']
+
+        self.iters += 1
+        self.int_e += np.abs(e)
+        if e < self.delta and self.iters2delta is None:
+            self.iters2delta = self.iters
+        elif e > self.delta:
+            self.iters2delta = None
+
+        f1 = 0
+        sum_p_f1 = 0
+        f2 = 0
+        sum_p_f2 = 0
+        # print(f'e={e:.2f}   de={de:.2f}')
+        for set_e_key in self.e_sets_dict:
+            for set_de_key in self.de_sets_dict:
+                comp_set_key = set_e_key + set_de_key
+                p_e = self.e_sets_dict[set_e_key](e)
+                p_de = self.de_sets_dict[set_de_key](de)
+                f1_temp = self.f1_dict[comp_set_key]
+                f2_temp = self.f2_dict[comp_set_key]
+                # print(
+                #     f'e_key:{set_e_key}, de_key:{set_de_key} --> ' +
+                #     f'p_e:{p_e:.2f}   p_de:{p_de:.2f}')
+                f1 += p_e*p_de*f1_temp
+                sum_p_f1 += p_e*p_de
+                f2 += p_e*p_de*f2_temp
+                sum_p_f2 += p_e*p_de
+        f1 = f1/sum_p_f1
+        f2 = f2/sum_p_f2
+
+        # print(f'e={e:.2f}   de={de:.2f}   f1={f1:.2f}   f2={f2:.2f}')
+        # print('------------------------------------------------')
         return {
-            'f1': 1,
-            'f2': 1
+            'f1': f1,
+            'f2': f2
         }
+
+    def get_performance(self):
+        return {
+            'int_e': self.int_e, 'iters2delta': self.iters2delta,
+            'variables': self.variables}
 
 
 class LQRSubmodelFuzzyController(SimulationBox):

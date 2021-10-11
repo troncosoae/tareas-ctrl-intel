@@ -4,16 +4,17 @@ from Simulation import SimulationBox
 
 
 class DerivativeBox(SimulationBox):
-    def __init__(self, key, input_key):
+    def __init__(self, key, input_key, Ts):
         self.input_key = input_key
-        self.output_key = input_key + 's'
+        self.output_key = 'd' + input_key
         self.prev_value = 0
+        self.Ts = Ts
         super().__init__(key, [input_key], [self.output_key])
 
     def advance(self, input_values):
         super().advance(input_values)
         value = input_values[self.input_key]
-        der = value - self.prev_value
+        der = (value - self.prev_value)/self.Ts
         self.prev_value = value
         return {
             self.output_key: der

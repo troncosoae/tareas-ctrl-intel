@@ -53,9 +53,7 @@ def triangle_function_generator(a, b, c):
 
 
 if __name__ == '__main__':
-    func = inv_trapezoid_function_generator(1, 2, 3, 4)
-    print(func(0.5))
+    func = ramp_function_generator(2, 1)
+    print(func(0))
     print(func(1.5))
     print(func(2.5))
-    print(func(3.5))
-    print(func(4.5))
