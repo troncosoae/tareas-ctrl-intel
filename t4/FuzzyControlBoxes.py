@@ -2,15 +2,54 @@ import numpy as np
 
 from Simulation import SimulationBox
 from fuzzy_tools import ramp_function_generator, \
-    trapezoid_function_generator, inv_trapezoid_function_generator
+    trapezoid_function_generator, inv_trapezoid_function_generator, \
+    triangle_function_generator
 
 
 class GeneticFuzzyController(SimulationBox):
     def __init__(self, key, inputs_keys, outputs_keys, variables):
         super().__init__(key, inputs_keys, outputs_keys)
 
+        self.e_sets_dict = {
+            'se': ramp_function_generator(1, 3),
+            'ze': triangle_function_generator(2, 3, 4),
+            'be': ramp_function_generator(3, 5)
+        }
+        self.de_sets_dict = {
+            'sde': ramp_function_generator(1, 3),
+            'zde': triangle_function_generator(2, 3, 4),
+            'bde': ramp_function_generator(3, 5)
+        }
+
+        self.f1_dict = {
+            'sesde': 1,
+            'sezde': 1,
+            'sebde': 1,
+            'zesde': 1,
+            'zezde': 1,
+            'zebde': 1,
+            'besde': 1,
+            'bezde': 1,
+            'bebde': 1
+        }
+        self.f2_dict = {
+            'sesde': 1,
+            'sezde': 1,
+            'sebde': 1,
+            'zesde': 1,
+            'zezde': 1,
+            'zebde': 1,
+            'besde': 1,
+            'bezde': 1,
+            'bebde': 1
+        }
+
     def advance(self, input_values):
         super().advance(input_values)
+        return {
+            'f1': 1,
+            'f2': 1
+        }
 
 
 class LQRSubmodelFuzzyController(SimulationBox):
