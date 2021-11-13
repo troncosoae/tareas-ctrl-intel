@@ -64,6 +64,43 @@ class WindModel(SimulationBox):
         }
 
 
+class GeneratorConverterModel(SimulationBox):
+    def __init__(self, key, Ts, **kwargs):
+        SimulationBox.__init__(
+            self, key, ['omega_g', 'tau_gr'],
+            ['tau_g', 'P_g', 'tau_gm', 'omega_gm'])
+
+        self.chars = {
+            'Ts': Ts,
+            'alpha_gc': kwargs.get('alpha_gc', 50),  # 50 rad/s
+            'nu_g': kwargs.get('nu_g', 0.98),  # 0.98
+        }
+
+        self.state = {
+            'tau_g': kwargs.get('tau_g_0', 0),
+        }
+
+    def advance(self, input_values):
+        super().advance(input_values)
+
+        tau_gr = input_values['tau_gr']
+        omega_g = input_values['omega_g']
+        tau_g = self.state['tau_g']
+        Ts = self.chars['Ts']
+        alpha_gc = self.chars['alpha_gc']
+        nu_g = self.chars['nu_g']
+
+        self.state['tau_g'] += Ts*alpha_gc*(tau_g - tau_gr)
+        P_g = nu_g*omega_g*tau_g
+
+        return {
+            'tau_g': self.state['tau_g'],
+            'P_g': P_g,
+            'tau_gm': self.state['tau_g'],
+            'omega_gm': omega_g
+        }
+
+
 class DriveTrainModel(SimulationBox):
     def __init__(self, key, Ts, **kwargs):
         SimulationBox.__init__(
