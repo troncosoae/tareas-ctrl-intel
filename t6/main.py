@@ -36,8 +36,7 @@ if __name__ == "__main__":
             'omega_g': (255, 255, 0),
             'beta_r': (255, 0, 0)
         },
-        -1, 20, pygame_fs, get_close_sim_for_box(sim))
-    input_box = InputBox('inpt_box', Ts, ['beta_r'])
+        -1, 100, pygame_fs, get_close_sim_for_box(sim))
 
     sim.add_box(wind_model)
     sim.add_box(blade_pitch_system, {'beta_r': np.pi/8, 'omega_r': 0})
@@ -45,7 +44,6 @@ if __name__ == "__main__":
     sim.add_box(generator_converter_model, {'tau_gr': 0})
     sim.add_box(measurer)
     sim.add_box(pygame_tracker)
-    sim.add_box(input_box)
 
     sim.run()
 

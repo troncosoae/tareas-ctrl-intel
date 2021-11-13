@@ -17,7 +17,6 @@ class InputBox(SimulationBox):
         if self.counter > 1000:
             self.counter = 0
             self.on = not self.on
-        print(self.on)
         return_dict = {}
         for key in self.output_keys:
             return_dict[key] = 1 if self.on else 0
@@ -54,6 +53,9 @@ class WindModel(SimulationBox):
         self.state['v_s'] += np.random.normal(0, self.chars['sigma_s'])
         v_W = self.state['v_m'] + self.state['v_s'] + self.state['v_ws'] + \
             self.state['v_ts']
+
+        for key in self.state:
+            self.state[key] = np.abs(self.state[key])
 
         return {
             'v_m':  self.state['v_m'],
@@ -165,7 +167,13 @@ class BladePitchSystem(SimulationBox):
             self, key, ['v_W', 'beta_r', 'omega_r'], ['beta_m', 'tau_r'])
 
         def default_Cq(lmbda, beta):
-            return 0.45*np.cos(beta)/lmbda
+            if beta >= np.pi:
+                return 0
+            elif beta < 0:
+                return 0
+            A = 2/(1 + np.exp(-0.25*lmbda)) - 1
+            Cq = A*(1 - np.cos(2*beta))
+            return Cq
 
         self.chars = {
             'zeta': kwargs.get('zeta', 0.6),  # damping factor
