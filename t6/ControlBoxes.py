@@ -23,6 +23,9 @@ class TurbineController(SimulationBox):
         self.last_omega_g_error = 0
         self.last_tau_gr = 0
 
+        self.P_g_error_seq_N = int(1/Ts)
+        self.P_g_error_seq = np.zeros(self.P_g_error_seq_N)
+        self.last_avg_P_g_error = 0
         self.last_P_g_error = 0
         self.last_beta_r = 0
 
@@ -37,10 +40,15 @@ class TurbineController(SimulationBox):
         self.last_omega_g_error = omega_g_error
 
         P_g_error = input_values['P_g'] - input_values['P_r']
-        beta_r = self.last_beta_r + self.kp1*P_g_error - \
-            self.kp1*self.last_P_g_error + self.ki1*self.Ts*P_g_error
+        avg_P_g_error = np.mean(self.P_g_error_seq)
+        beta_r = self.last_beta_r + self.kp1*avg_P_g_error - \
+            self.kp1*self.last_avg_P_g_error + self.ki1*self.Ts*avg_P_g_error
 
         self.last_P_g_error = P_g_error
+        self.last_avg_P_g_error = avg_P_g_error
+        self.P_g_error_seq[1:self.P_g_error_seq_N] = self.P_g_error_seq[
+            0:self.P_g_error_seq_N-1]
+        self.P_g_error_seq[0] = P_g_error
         self.last_beta_r = beta_r
 
         return {

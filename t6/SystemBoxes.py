@@ -65,7 +65,7 @@ class WindModel(SimulationBox):
             'v_s':  self.state['v_s'],
             'v_ws': self.state['v_ws'],
             'v_ts': self.state['v_ts'],
-            'v_W': 1,  # TODO: cambiar esto por valor real
+            'v_W': v_W,  # TODO: cambiar esto por valor real
         }
 
 

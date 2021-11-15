@@ -28,7 +28,7 @@ if __name__ == "__main__":
         omega_g_0=omega_g_stable)
     generator_converter_model = GeneratorConverterModel('gc_model', Ts)
     omega_g_ctrl = TurbineController(
-        'omega_g_ctrl', kp=[10000, 10], ki=[1, 0], kd=[0, 0], Ts=Ts)
+        'omega_g_ctrl', kp=[10000, 1], ki=[1, 0], kd=[0, 0], Ts=Ts)
     measurer = PlottingMeasurer(
         'meas',
         [
