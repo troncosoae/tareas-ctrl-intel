@@ -7,7 +7,7 @@ class TurbineController(SimulationBox):
 
     def __init__(self, key, kp, ki, kd, Ts):
         SimulationBox.__init__(
-            self, key, ['omega_g', 'P_r'], ['tau_gr', 'beta_r'])
+            self, key, ['omega_g', 'P_r', 'P_g'], ['tau_gr', 'beta_r'])
 
         self.last_omega_g = 0
 
@@ -28,6 +28,7 @@ class TurbineController(SimulationBox):
             self.ki*self.Ts*error
 
         self.last_u = u
+        # self.last_omega_g = d_omega_g
 
         # update error values
         self.last_error = error
