@@ -7,33 +7,46 @@ class TurbineController(SimulationBox):
 
     def __init__(self, key, kp, ki, kd, Ts):
         SimulationBox.__init__(
-            self, key, ['omega_g', 'P_r', 'P_g'], ['tau_gr', 'beta_r'])
+            self, key, ['omega_g', 'omega_gr', 'P_r', 'P_g'],
+            ['tau_gr', 'beta_r'])
 
-        self.last_omega_g = 0
+        self.kp0 = kp[0]
+        self.ki0 = ki[0]
+        self.kd0 = kd[0]
 
-        self.kp = kp
-        self.ki = ki
-        self.kd = kd
+        self.kp1 = kp[1]
+        self.ki1 = ki[1]
+        self.kd1 = kd[1]
+
         self.Ts = Ts
-        self.last_error = 0
-        self.last_u = 0
+
+        self.last_omega_g_error = 0
+        self.last_tau_gr = 0
+
+        self.last_P_g_error = 0
+        self.last_beta_r = 0
 
     def advance(self, input_values):
         super().advance(input_values)
 
-        d_omega_g = input_values['omega_g'] - self.last_omega_g
-        error = d_omega_g
+        omega_g_error = input_values['omega_g'] - input_values['omega_gr']
+        tau_gr = self.last_tau_gr + self.kp0*omega_g_error - \
+            self.kp0*self.last_omega_g_error + self.ki0*self.Ts*omega_g_error
 
-        u = self.last_u + self.kp*error - self.kp*self.last_error + \
-            self.ki*self.Ts*error
+        self.last_tau_gr = tau_gr
+        self.last_omega_g_error = omega_g_error
 
-        self.last_u = u
-        # self.last_omega_g = d_omega_g
+        P_g_error = input_values['P_g'] - input_values['P_r']
+        beta_r = self.last_beta_r + self.kp1*P_g_error - \
+            self.kp1*self.last_P_g_error + self.ki1*self.Ts*P_g_error
 
-        # update error values
-        self.last_error = error
+        self.last_P_g_error = P_g_error
+        self.last_beta_r = beta_r
 
-        return {'tau_gr': u}
+        return {
+            'tau_gr': tau_gr,
+            'beta_r': beta_r
+        }
 
 
 class PIDController(SimulationBox):

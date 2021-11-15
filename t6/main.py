@@ -28,13 +28,13 @@ if __name__ == "__main__":
         omega_g_0=omega_g_stable)
     generator_converter_model = GeneratorConverterModel('gc_model', Ts)
     omega_g_ctrl = TurbineController(
-        'omega_g_ctrl', kp=10000, ki=1, kd=0, Ts=Ts)
+        'omega_g_ctrl', kp=[10000, 10], ki=[1, 0], kd=[0, 0], Ts=Ts)
     measurer = PlottingMeasurer(
         'meas',
         [
             'v_W', 'beta_m', 'beta_r', 'omega_r',
             'omega_g', 'P_g', 'tau_g', 'tau_r', 'tau_gr',
-            'theta_d'
+            'theta_d', 'P_r'
         ],
         Ts)
     pygame_tracker = PlottingTurbineWindow(
@@ -50,7 +50,7 @@ if __name__ == "__main__":
         blade_pitch_system, {'beta_r': beta_r_stable, 'omega_r': 1})
     sim.add_box(drive_train_model, {'tau_g': 1})
     sim.add_box(generator_converter_model, {'tau_gr': tau_gr_stable})
-    sim.add_box(omega_g_ctrl, {'P_r': 0.1})
+    sim.add_box(omega_g_ctrl, {'P_r': 1000, 'omega_gr': 0.05})
     sim.add_box(measurer)
     sim.add_box(pygame_tracker)
 
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     pygame_tracker.quit_pygame()
 
     measurer.plot_values(exclude={'tau_r'})
-    # measurer.plot_values({'P_g', 'P_r', 'tau_gr'})
+    measurer.plot_values({'P_g', 'P_r', 'beta_r'})
     measurer.plot_values({'omega_g', 'beta_r', 'tau_gr'})
     measurer.plot_values(
         {'omega_r', 'omega_g', 'tau_r', 'tau_g', 'theta_d'},
