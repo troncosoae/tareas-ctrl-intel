@@ -3,14 +3,50 @@ import numpy as np
 from Simulation import SimulationBox
 
 
+class TurbineController(SimulationBox):
+
+    def __init__(self, key, kp, ki, kd, Ts):
+        SimulationBox.__init__(
+            self, key, ['omega_g', 'P_r'], ['tau_gr', 'beta_r'])
+
+        self.last_omega_g = 0
+
+        self.kp = kp
+        self.ki = ki
+        self.kd = kd
+        self.Ts = Ts
+        self.last_error = 0
+        self.last_u = 0
+
+    def advance(self, input_values):
+        super().advance(input_values)
+
+        d_omega_g = input_values['omega_g'] - self.last_omega_g
+        error = d_omega_g
+
+        u = self.last_u + self.kp*error - self.kp*self.last_error + \
+            self.ki*self.Ts*error
+
+        self.last_u = u
+
+        # update error values
+        self.last_error = error
+
+        return {'tau_gr': u}
+
+
 class PIDController(SimulationBox):
 
-    def __init__(self, key, ref_name, ctrl_v_name, man_v_name, kp, ki, kd, Ts):
+    def __init__(
+            self, key, ref_name, ctrl_v_name, man_v_name, kp, ki, kd, Ts,
+            man_v_offset=0):
         SimulationBox.__init__(
             self, key, [ref_name, ctrl_v_name], [man_v_name])
         self.ref_name = ref_name
         self.ctrl_v_name = ctrl_v_name
         self.man_v_name = man_v_name
+
+        self.man_v_offset = man_v_offset
 
         self.kp = kp
         self.ki = ki
@@ -28,7 +64,10 @@ class PIDController(SimulationBox):
         # update error values
         self.last_error = error
 
+        print(self.key, error, error*self.kp)
+
         u = error*self.kp + self.int_error*self.ki + der_error*self.kd
+        u += self.man_v_offset
         return {self.man_v_name: u}
 
 

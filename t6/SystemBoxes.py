@@ -13,13 +13,16 @@ class InputBox(SimulationBox):
 
     def advance(self, input_values):
         super().advance(input_values)
-        self.counter += 1
-        if self.counter > 1000:
-            self.counter = 0
-            self.on = not self.on
+        # self.counter += 1
+        # if self.counter > 1000:
+        #     self.counter = 0
+        #     self.on = not self.on
+        # return_dict = {}
+        # for key in self.output_keys:
+        #     return_dict[key] = 1 if self.on else 0
         return_dict = {}
         for key in self.output_keys:
-            return_dict[key] = 1 if self.on else 0
+            return_dict[key] = 1
         return return_dict
 
 
@@ -62,7 +65,7 @@ class WindModel(SimulationBox):
             'v_s':  self.state['v_s'],
             'v_ws': self.state['v_ws'],
             'v_ts': self.state['v_ts'],
-            'v_W': v_W,
+            'v_W': 1,  # TODO: cambiar esto por valor real
         }
 
 
@@ -92,7 +95,7 @@ class GeneratorConverterModel(SimulationBox):
         alpha_gc = self.chars['alpha_gc']
         nu_g = self.chars['nu_g']
 
-        self.state['tau_g'] += Ts*alpha_gc*(tau_g - tau_gr)
+        self.state['tau_g'] += Ts*alpha_gc*(tau_gr - tau_g)
         P_g = nu_g*omega_g*tau_g
 
         return {
@@ -106,7 +109,8 @@ class GeneratorConverterModel(SimulationBox):
 class DriveTrainModel(SimulationBox):
     def __init__(self, key, Ts, **kwargs):
         SimulationBox.__init__(
-            self, key, ['tau_r', 'tau_g'], ['omega_g', 'omega_r', 'omega_rm'])
+            self, key, ['tau_r', 'tau_g'],
+            ['omega_g', 'omega_r', 'omega_rm', 'theta_d'])
 
         self.chars = {
             'Ts': Ts,
@@ -119,6 +123,13 @@ class DriveTrainModel(SimulationBox):
             'Jg': kwargs.get('Jg', 390),
             'Jr': kwargs.get('Jr', 55e6),
         }
+
+        # self.A = np.array([
+        #     [-(Bdt + Br)/Jg, Bdt/Ng/Jg, -Kdt/Jg],
+        #     [nudt*Bdt/Ng/Jr, -(nudt*Bdt/Ng^2 + Bg)/Jr, nudt*Kdt/Ng/Jr],
+        #     [1, -1/Ng, 0]
+        # ])
+
         self.state = {
             'omega_r': kwargs.get('omega_r_0', 0),
             'omega_g': kwargs.get('omega_g_0', 0),
@@ -143,21 +154,26 @@ class DriveTrainModel(SimulationBox):
         Jg = self.chars['Jg']
         Jr = self.chars['Jr']
 
-        self.state['omega_r'] += Ts/Jr*(
+        domegar = Ts/Jr*(
             tau_r - Kdt*td - (Bdt + Br)*wr + Bdt/Ng*wg
         )
-        self.state['omega_g'] += Ts/Jg*(
+        domegag = Ts/Jg*(
             nu_dt*Kdt/Ng*td + nu_dt*Bdt/Ng*wr -
             (nu_dt*Bdt/Ng**2 + Bg)*wg - tau_g
         )
-        self.state['theta_d'] += Ts*(
+        dthetad = Ts*(
             wr - 1/Ng*wg
         )
+
+        self.state['omega_r'] += domegar
+        self.state['omega_g'] += domegag
+        self.state['theta_d'] += dthetad
 
         return {
             'omega_g': self.state['omega_g'],
             'omega_r': self.state['omega_r'],
             'omega_rm': self.state['omega_r'],
+            'theta_d': self.state['theta_d'],
         }
 
 
@@ -167,10 +183,10 @@ class BladePitchSystem(SimulationBox):
             self, key, ['v_W', 'beta_r', 'omega_r'], ['beta_m', 'tau_r'])
 
         def default_Cq(lmbda, beta):
-            if beta >= np.pi:
-                return 0
-            elif beta < 0:
-                return 0
+            # if beta >= np.pi:
+            #     return 0
+            # elif beta < 0:
+            #     return 0
             A = 2/(1 + np.exp(-0.25*lmbda)) - 1
             Cq = A*(1 - np.cos(2*beta))
             return Cq

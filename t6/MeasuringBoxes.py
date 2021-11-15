@@ -34,9 +34,12 @@ class PlottingMeasurer(BasicMeasurer):
                 self.historical_values[key].append(value)
         return {}
 
-    def plot_values(self, keys=None):
-        if keys is None:
-            keys = self.historical_values.keys()
+    def plot_values(self, keys=set(), exclude=set()):
+        if len(keys) == 0:
+            keys = set(self.historical_values.keys())
+
+        for key in exclude:
+            keys.remove(key)
 
         for key in keys:
             plt.plot(self.t, self.historical_values[key], label=key)
