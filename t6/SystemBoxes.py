@@ -73,7 +73,7 @@ class GeneratorConverterModel(SimulationBox):
     def __init__(self, key, Ts, **kwargs):
         SimulationBox.__init__(
             self, key, ['omega_g', 'tau_gr'],
-            ['tau_g', 'P_g', 'tau_gm', 'omega_gm'])
+            ['tau_g', 'P_g', 'omega_gm'])
 
         self.chars = {
             'Ts': Ts,
@@ -101,7 +101,6 @@ class GeneratorConverterModel(SimulationBox):
         return {
             'tau_g': self.state['tau_g'],
             'P_g': P_g,
-            'tau_gm': self.state['tau_g'],
             'omega_gm': omega_g
         }
 

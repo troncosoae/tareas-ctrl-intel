@@ -53,7 +53,7 @@ class TurbineController(SimulationBox):
 
         return {
             'tau_gr': tau_gr,
-            'beta_r': beta_r
+            'beta_r': np.arctan(beta_r)
         }
 
 

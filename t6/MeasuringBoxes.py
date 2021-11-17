@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import pandas as pd
 
 from Simulation import SimulationBox
 
@@ -37,7 +38,6 @@ class PlottingMeasurer(BasicMeasurer):
     def plot_values(self, keys=set(), exclude=set()):
         if len(keys) == 0:
             keys = set(self.historical_values.keys())
-
         for key in exclude:
             keys.remove(key)
 
@@ -46,3 +46,18 @@ class PlottingMeasurer(BasicMeasurer):
         plt.xlabel('t')
         plt.legend()
         plt.show()
+
+    def export_values(self, path, keys=set(), exclude=set()):
+        if len(keys) == 0:
+            keys = set(self.historical_values.keys())
+        for key in exclude:
+            keys.remove(key)
+
+        data = {}
+        for key in keys:
+            data[key] = self.historical_values[key]
+        data['t'] = self.t
+
+        data_df = pd.DataFrame(data)
+
+        data_df.to_csv(path)
